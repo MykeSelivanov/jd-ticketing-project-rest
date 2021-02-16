@@ -1,5 +1,6 @@
 package com.cybertek.config;
 
+import com.cybertek.filter.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    @Autowired
-//    private SecurityFilter securityFilter;
+    @Autowired
+    private SecurityFilter securityFilter;
 
     @Override
     @Bean
@@ -45,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated();
 
-//        httpSecurity.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
 }
