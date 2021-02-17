@@ -57,4 +57,13 @@ public class LoginController {
 		return ResponseEntity.ok(new ResponseWrapper("Login successful", jwtToken));
 	}
 
+	@DefaultExceptionMessage(defaultMessage = "Something went wrong, try again!")
+	@PostMapping("/create-user")
+	@Operation(summary = "Create new account")
+	private ResponseEntity<ResponseWrapper> doRegister(@RequestBody UserDTO userDTO) {
+
+		UserDTO createdUser = userService.save(userDTO);
+
+	}
+
 }
