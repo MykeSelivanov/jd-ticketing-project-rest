@@ -18,9 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -45,7 +48,8 @@ public class UserController {
     @DefaultExceptionMessage(defaultMessage = "Something went wrong, try again!")
     @PostMapping("/create-user")
     @Operation(summary = "Create new account")
-    private ResponseEntity<ResponseWrapper> doRegister(@RequestBody UserDTO userDTO) throws TicketingProjectException {
+    @PreAuthorize("hasAuthority('Admin')")
+    public ResponseEntity<ResponseWrapper> doRegister(@RequestBody UserDTO userDTO) throws TicketingProjectException {
 
         UserDTO createdUser = userService.save(userDTO);
 
@@ -53,6 +57,65 @@ public class UserController {
 
         return ResponseEntity.ok(new ResponseWrapper("User has been created!", createdUser));
     }
+
+    @GetMapping
+    @DefaultExceptionMessage(defaultMessage = "Could not read all users!")
+    @Operation(summary = "Read all users")
+    @PreAuthorize("hasAuthority('Admin')")
+    public ResponseEntity<ResponseWrapper> readAll(){
+        // business logic  - bring the data
+        List<UserDTO> result = userService.listAllUsers();
+        return ResponseEntity.ok(new ResponseWrapper("Successfully retrieved users", result));
+    }
+
+    @GetMapping("/{username}")
+    @DefaultExceptionMessage(defaultMessage = "Not able to get a specific user!")
+    @Operation(summary = "Read one specific user")
+    // TODO Only admin should see other profiles or current user can see his/her profile
+    public ResponseEntity<ResponseWrapper> readByUsername(@PathVariable("username") String username){
+
+        UserDTO user = userService.findByUserName(username);
+        return ResponseEntity.ok(new ResponseWrapper("Successfully retrieved user", user));
+    }
+
+    @PutMapping
+    @DefaultExceptionMessage(defaultMessage = "Not able to update user!")
+    @Operation(summary = "Update user")
+    public ResponseEntity<ResponseWrapper> updateUser(@RequestBody UserDTO userDTO) throws TicketingProjectException {
+        UserDTO updatedUser = userService.update(userDTO);
+        return ResponseEntity.ok(new ResponseWrapper("Successfully updated user", updatedUser));
+    }
+
+    @DeleteMapping("/{username}")
+    @DefaultExceptionMessage(defaultMessage = "Not able to delete user!")
+    @Operation(summary = "Delete user")
+    @PreAuthorize("hasAuthority('Admin')")
+    public ResponseEntity<ResponseWrapper> deleteUser(@PathVariable("username") String username) throws TicketingProjectException {
+        userService.delete(username);
+        return ResponseEntity.ok(new ResponseWrapper("Successfully deleted"));
+    }
+
+    @GetMapping("/role")
+    @DefaultExceptionMessage(defaultMessage = "Not able to delete user!")
+    @Operation(summary = "Get users by role")
+    @PreAuthorize("hasAnyAuthority('Admin','Manager')")
+    public ResponseEntity<ResponseWrapper> readByRole(@RequestParam String role){
+        List<UserDTO> userDTOList = userService.listAllByRole(role);
+        return ResponseEntity.ok(new ResponseWrapper("Successfully read users by role", userDTOList));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private MailDTO createEmail(UserDTO userDTO){
         User user = mapperUtil.convert(userDTO, new User());
