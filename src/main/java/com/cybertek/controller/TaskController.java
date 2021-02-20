@@ -38,7 +38,7 @@ public class TaskController {
     @PreAuthorize("hasAuthority('Manager')")
     public ResponseEntity<ResponseWrapper> readAllByProjectManager() throws TicketingProjectException {
         List<TaskDTO> taskDTOList = taskService.listAllTasksByProjectManager();
-        return ResponseEntity.ok(new ResponseWrapper("Successfully retrieved tasks by project manager!",))
+        return ResponseEntity.ok(new ResponseWrapper("Successfully retrieved tasks by project manager!",taskDTOList));
     }
 
     @GetMapping("/{id}")
@@ -56,7 +56,10 @@ public class TaskController {
     @PreAuthorize("hasAuthority('Manager')")
     public ResponseEntity<ResponseWrapper> createTask(@RequestBody TaskDTO taskDTO){
         TaskDTO createdTask = taskService.save(taskDTO);
+        return ResponseEntity.ok(new ResponseWrapper("Successfully created task", createdTask));
     }
+
+
 
 
 
