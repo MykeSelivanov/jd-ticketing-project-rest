@@ -68,7 +68,13 @@ public class TaskController {
         return ResponseEntity.ok(new ResponseWrapper("Successfully deleted"));
     }
 
-    public ResponseEntity<ResponseWrapper> updateTask
+    @PutMapping
+    @DefaultExceptionMessage(defaultMessage = "Could not update task!")
+    @Operation(summary = "Update task")
+    @PreAuthorize("hasAuthority('Manager')")
+    public ResponseEntity<ResponseWrapper> updateTask(@RequestBody TaskDTO taskDTO){
+        TaskDTO updatedTask = taskService.update(taskDTO);
+    }
 
 
 
