@@ -59,6 +59,16 @@ public class TaskController {
         return ResponseEntity.ok(new ResponseWrapper("Successfully created task", createdTask));
     }
 
+    @DeleteMapping("/{id}")
+    @DefaultExceptionMessage(defaultMessage = "Could not delete task!")
+    @Operation(summary = "Delete task")
+    @PreAuthorize("hasAuthority('Manager')")
+    public ResponseEntity<ResponseWrapper> deleteTask(@PathVariable("id") Long id) throws TicketingProjectException {
+        taskService.delete(id);
+        return ResponseEntity.ok(new ResponseWrapper("Successfully deleted"));
+    }
+
+    public ResponseEntity<ResponseWrapper> updateTask
 
 
 

@@ -15,7 +15,7 @@ public interface TaskService {
     List<TaskDTO> listAllTasks();
     TaskDTO save(TaskDTO dto);
     void update(TaskDTO dto);
-    void delete(long id);
+    void delete(long id) throws TicketingProjectException;
 
     int totalNonCompletedTasks(String projectCode);
     int totalCompletedTasks(String projectCode);
