@@ -1,20 +1,16 @@
 package com.cybertek.implementation;
 
 import com.cybertek.dto.ProjectDTO;
-import com.cybertek.dto.UserDTO;
 import com.cybertek.entity.Project;
 import com.cybertek.entity.User;
 import com.cybertek.enums.Status;
 import com.cybertek.exception.TicketingProjectException;
-import com.cybertek.mapper.MapperUtil;
-import com.cybertek.mapper.ProjectMapper;
-import com.cybertek.mapper.UserMapper;
+import com.cybertek.util.MapperUtil;
 import com.cybertek.repository.ProjectRepository;
 import com.cybertek.repository.UserRepository;
 import com.cybertek.service.ProjectService;
 import com.cybertek.service.TaskService;
 import com.cybertek.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
