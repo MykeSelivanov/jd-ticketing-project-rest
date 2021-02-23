@@ -79,6 +79,9 @@ public class UserServiceImpl implements UserService {
         convertedUser.setEnabled(true);
 
         //set id to the converted object
+        if(!user.getEnabled()){
+            throw new TicketingProjectException("User is not confirmed");
+        }
         convertedUser.setId(user.getId());
         //save updated user
         userRepository.save(convertedUser);
