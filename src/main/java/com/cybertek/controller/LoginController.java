@@ -18,6 +18,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
+
 @RestController
 @Tag(name = "Authentication Controller", description = "Authenticate API")
 public class LoginController {
@@ -39,7 +41,7 @@ public class LoginController {
 	@PostMapping("/authenticate")
 	@DefaultExceptionMessage(defaultMessage = "Bad Credentials")
 	@Operation(summary = "Login to application")
-	public ResponseEntity<ResponseWrapper> doLogin(@RequestBody AuthenticationRequest authenticationRequest) throws TicketingProjectException {
+	public ResponseEntity<ResponseWrapper> doLogin(@RequestBody AuthenticationRequest authenticationRequest) throws TicketingProjectException, AccessDeniedException {
 
 		String password = authenticationRequest.getPassword();
 		String username = authenticationRequest.getUsername();
