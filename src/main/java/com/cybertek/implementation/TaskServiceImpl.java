@@ -86,28 +86,31 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteByProject(ProjectDTO project) {
-
         List<TaskDTO> taskDTOS = listAllByProject(project);
-        taskDTOS.forEach(taskDTO -> delete(taskDTO.getId()));
+        taskDTOS.forEach(taskDTO -> {
+            try {
+                delete(taskDTO.getId());
+            } catch (TicketingProjectException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 
     public List<TaskDTO> listAllByProject(ProjectDTO project){
 
-        List<Task> list = taskRepository.findAllByProject(projectMapper.convertToEntity(project));
+        List<Task> list = taskRepository.findAllByProject(mapperUtil.convert(project, new Project()));
 
-        return list.stream().map(obj -> {
-            return taskMapper.convertToDto(obj);
-        }).collect(Collectors.toList());
+        return list.stream().map(task -> mapperUtil.convert(task, new TaskDTO())).collect(Collectors.toList());
     }
 
     @Override
-    public List<TaskDTO> listAllTasksByStatusIsNot(Status status) {
+    public List<TaskDTO> listAllTasksByStatusIsNot(Status status) throws TicketingProjectException {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUserName(username);
+        String id  = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findById(Long.parseLong(id)).orElseThrow(() -> new TicketingProjectException("This user does not exist in DB"));
         List<Task> list = taskRepository.findAllByTaskStatusIsNotAndAssignedEmployee(status,user);
-        return list.stream().map(taskMapper::convertToDto).collect(Collectors.toList());
+        return list.stream().map(task -> mapperUtil.convert(task, new TaskDTO())).collect(Collectors.toList());
     }
 
     @Override
@@ -121,26 +124,16 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void updateStatus(TaskDTO dto) {
-        Optional<Task> task = taskRepository.findById(dto.getId());
-
-        if(task.isPresent()){
-            task.get().setTaskStatus(dto.getTaskStatus());
-            taskRepository.save(task.get());
-        }
-    }
-
-    @Override
-    public List<TaskDTO> listAllTasksByStatus(Status status) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUserName(username);
-        List<Task> list = taskRepository.findAllByTaskStatusAndAssignedEmployee(status,user);
-        return list.stream().map(taskMapper::convertToDto).collect(Collectors.toList());
+    public TaskDTO updateStatus(TaskDTO dto) throws TicketingProjectException {
+        Task task = taskRepository.findById(dto.getId()).orElseThrow(() -> new TicketingProjectException("Task does not exist in DB"));
+        task.setTaskStatus(dto.getTaskStatus());
+        Task savedTask = taskRepository.save(task);
+        return mapperUtil.convert(savedTask, new TaskDTO());
     }
 
     @Override
     public List<TaskDTO> readAllByEmployee(User assignedEmployee) {
         List<Task> tasks = taskRepository.findAllByAssignedEmployee(assignedEmployee);
-        return tasks.stream().map(taskMapper::convertToDto).collect(Collectors.toList());
+        return tasks.stream().map(task -> mapperUtil.convert(task, new TaskDTO())).collect(Collectors.toList());
     }
 }

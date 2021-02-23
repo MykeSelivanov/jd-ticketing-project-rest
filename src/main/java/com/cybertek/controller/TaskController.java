@@ -3,6 +3,7 @@ package com.cybertek.controller;
 import com.cybertek.annotation.DefaultExceptionMessage;
 import com.cybertek.dto.TaskDTO;
 import com.cybertek.entity.ResponseWrapper;
+import com.cybertek.enums.Status;
 import com.cybertek.exception.TicketingProjectException;
 import com.cybertek.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,12 +73,23 @@ public class TaskController {
     @DefaultExceptionMessage(defaultMessage = "Could not update task!")
     @Operation(summary = "Update task")
     @PreAuthorize("hasAuthority('Manager')")
-    public ResponseEntity<ResponseWrapper> updateTask(@RequestBody TaskDTO taskDTO){
+    public ResponseEntity<ResponseWrapper> updateTask(@RequestBody TaskDTO taskDTO) throws TicketingProjectException {
         TaskDTO updatedTask = taskService.update(taskDTO);
+        return ResponseEntity.ok(new ResponseWrapper("Successfully updated", updatedTask));
     }
 
+    @GetMapping("/employee")
+    @Operation(summary = "Read all non completed tasks")
+    @PreAuthorize("hasAuthority('Employee')")
+    public ResponseEntity<ResponseWrapper> employeeReadAllNonCompletedTasks() throws TicketingProjectException {
+        List<TaskDTO> taskDTOList = taskService.listAllTasksByStatusIsNot(Status.COMPLETE);
+        return ResponseEntity.ok(new ResponseWrapper("Successfully read non completed current user tasks", taskDTOList));
+    }
 
-
+    public ResponseEntity<ResponseWrapper> employeeUpdateTask(@RequestBody TaskDTO taskDTO) throws TicketingProjectException {
+        TaskDTO task = taskService.updateStatus(taskDTO);
+        return ResponseEntity.ok(new ResponseWrapper("Employee successfully updated task status", task));
+    }
 
 
 }
