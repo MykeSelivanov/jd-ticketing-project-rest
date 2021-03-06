@@ -28,9 +28,13 @@ import java.util.stream.Collectors;
 @Tag(name = "Project Controller", description = "Project API")
 public class ProjectController {
 
-
     private ProjectService projectService;
     private UserService userService;
+
+    public ProjectController(ProjectService projectService, UserService userService) {
+        this.projectService = projectService;
+        this.userService = userService;
+    }
 
     @GetMapping
     @DefaultExceptionMessage(defaultMessage = "Could not retrieve all projects!")
