@@ -30,7 +30,7 @@ datasource:
 Import project in IDE (preferably InteliJ IDEA) and run ```SpringMvcProjectManagementApplication``` <br>
 
 Go to ```http://localhost:${PORT}/swagger-ui.html``` in your browser (you can switch ports in ```application.yml```, default = 8080)<br>
-```/swagger-ui.html``` navigates to OPEN API 3.0 interface with easy interaction to all available endpoints
+```/swagger-ui.html``` navigates to OPEN API 3.0 interface to easily interact with all available endpoints
 
 ## Logs
 To check logs from Aspect Oriented Layer provide path to store log file locally in ```log4j2.properties```
