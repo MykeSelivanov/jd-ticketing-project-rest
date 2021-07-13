@@ -36,8 +36,8 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
-    username: cybertekschool.email@gmail.com
-    password: Cybertekschool@2020
+    username: USERNAME_FOR_EMAIL_SUBS
+    password: PWD_FOR_EMAIL_SUBS
 security:
   jwt:
     secret-key: cybertek
